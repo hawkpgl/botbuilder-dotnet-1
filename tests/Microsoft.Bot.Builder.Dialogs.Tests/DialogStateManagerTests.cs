@@ -291,10 +291,7 @@ namespace Microsoft.Bot.Builder.Dialogs.Tests
 
                 foreach (var key in dc.State.Keys)
                 {
-                    if (key != "dialogContext")
-                    {
-                        Assert.AreEqual(dc.State.GetValue<object>(key), dc.State[key]);
-                    }
+                    Assert.AreEqual(dc.State.GetValue<object>(key), dc.State[key]);
                 }
             }).StartTestAsync();
         }
