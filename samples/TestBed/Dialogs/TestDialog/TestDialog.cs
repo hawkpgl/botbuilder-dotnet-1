@@ -18,9 +18,8 @@ namespace Microsoft.BotBuilderSamples
         public TestDialog()
             : base(nameof(TestDialog))
         {
-            var testDialog = new AdaptiveDialog("rootDialog")
+            var rootDialog = new AdaptiveDialog(nameof(AdaptiveDialog))
             {
-                AutoEndDialog = false,
                 Generator = new TemplateEngineLanguageGenerator(),
                 Recognizer = new RegexRecognizer()
                 {
@@ -28,122 +27,100 @@ namespace Microsoft.BotBuilderSamples
                     {
                         new IntentPattern()
                         {
-                            Intent = "why",
-                            Pattern = "why"
+                            Intent = "start",
+                            Pattern = "start"
                         },
                         new IntentPattern()
                         {
-                            Intent = "no",
-                            Pattern = "no"
+                            Intent = "help",
+                            Pattern = "help"
                         }
                     }
                 },
+                Triggers = new List<OnCondition>()
+                {
+                    new OnIntent()
+                    {
+                        Intent = "start",
+                        Actions = new List<Dialog>()
+                        {
+                            new BeginDialog()
+                            {
+                                Dialog = "child1"
+                            }
+                        }
+                    },
+                    new OnIntent()
+                    {
+                        Intent = "help",
+                        Actions = new List<Dialog>()
+                        {
+                            new SendActivity("This is help in rootDialog")
+                        }
+                    },
+                    new OnUnknownIntent()
+                    {
+                        Actions = new List<Dialog>()
+                        {
+                            new SendActivity("This is fallback text in rootDialog")
+                        }
+                    }
+                }
+            };
+
+            var childDialog = new AdaptiveDialog("child1")
+            {
+                Generator = new TemplateEngineLanguageGenerator(),
                 Triggers = new List<OnCondition>()
                 {
                     new OnBeginDialog()
                     {
                         Actions = new List<Dialog>()
                         {
-                            new SendActivity("In profile dialog..."),
-                            new TextInput()
+                            new SendActivity("say one of these - one | end | help"),
+                            new EndTurn(),
+                            new SwitchCondition()
                             {
-                                Id = "askForName",
-                                Prompt = new ActivityTemplate("What is your name?"),
-                                Property = "user.name"
-                            },
-                            new SendActivity("I have ${user.name}"),
-                            new TextInput()
-                            {
-                                Id = "askForAge",
-                                Prompt = new ActivityTemplate("What is your age?"),
-                                Property = "user.age"
-                            },
-                            new SendActivity("I have ${user.age}")
-                        }
-                    },
-                    new OnIntent()
-                    {
-                        Intent = "why",
-                        Condition = "contains(dialogContext.stack, 'askForName')",
-                        Actions = new List<Dialog>()
-                        {
-                            new SendActivity("I need your name to address you correctly"),
-                        }
-                    },
-                    new OnIntent()
-                    {
-                        Intent = "why",
-                        Condition = "contains(dialogContext.stack, 'askForAge')",
-                        Actions = new List<Dialog>()
-                        {
-                            new SendActivity("I need your age to provide relevant product recommendations")
-                        }
-                    },
-                    new OnIntent()
-                    {
-                        Intent = "why",
-                        Actions = new List<Dialog>()
-                        {
-                            new SendActivity("I need your information to complete the sample..")
-                        }
-                    },
-                    new OnIntent()
-                    {
-                        Intent = "no",
-                        Actions = new List<Dialog>()
-                        {
-                            new SetProperties()
-                            {
-                                Assignments = new List<PropertyAssignment>()
+                                Condition = "turn.activity.text",
+                                Cases = new List<Case>()
                                 {
-                                    new PropertyAssignment()
+                                    new Case()
                                     {
-                                        Property = "user.name",
-                                        Value = "Human"
+                                        Value = "one",
+                                        Actions = new List<Dialog>()
+                                        {
+                                            new SendActivity("You said 'one' (local)")
+                                        }
                                     },
-                                    new PropertyAssignment()
+                                    new Case()
                                     {
-                                        Property = "user.age",
-                                        Value = "30"
+                                        Value = "end",
+                                        Actions = new List<Dialog>()
+                                        {
+                                            new SendActivity("Ending child1"),
+                                            new EndDialog()
+                                        }
+                                    }
+                                },
+                                Default = new List<Dialog>()
+                                {
+                                    new SendActivity("Child cannot handle this.. bubble up to parent"),
+                                    new EmitEvent()
+                                    {
+                                        EventName = AdaptiveEvents.UnknownIntent,
+                                        BubbleEvent = true
                                     }
                                 }
-                            }
+                            },
+                            new RepeatDialog()
                         }
-                    },
-                    new OnIntent()
-                    {
-                       Intent = "no",
-                       Condition = "contains(dialogContext.stack, 'askForName')",
-                       Actions = new List<Dialog>()
-                       {
-                           new SetProperty()
-                           {
-                               Property = "user.name",
-                               Value = "Human"
-                           }
-                       }
-                    },
-                    new OnIntent()
-                    {
-                       Intent = "no",
-                       Condition = "contains(dialogContext.stack, 'askForAge')",
-                       Actions = new List<Dialog>()
-                       {
-                           new SetProperty()
-                           {
-                               Property = "user.age",
-                               Value = "30"
-                           }
-                       }
                     }
                 }
             };
 
-            // Add named dialogs to the DialogSet. These names are saved in the dialog state.
-            AddDialog(testDialog);
-
-            // The initial child dialog to run.
-            InitialDialogId = "rootDialog";
+            AddDialog(rootDialog);
+            AddDialog(childDialog);
+            InitialDialogId = nameof(AdaptiveDialog);
         }
     }
 }
