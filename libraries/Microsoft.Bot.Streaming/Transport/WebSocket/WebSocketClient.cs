@@ -89,7 +89,7 @@ namespace Microsoft.Bot.Streaming.Transport.WebSockets
         /// <returns>A <see cref="Task"/> that will not resolve until the client stops listening for incoming messages.</returns>
         public async Task ConnectAsync(IDictionary<string, string> requestHeaders = null)
         {
-            await ConnectAsyncEx(requestHeaders);
+            await ConnectAsyncEx(requestHeaders).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -100,7 +100,9 @@ namespace Microsoft.Bot.Streaming.Transport.WebSockets
         /// </param>
         /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> used to signal this operation should be cancelled.</param>
         /// <returns>A <see cref="Task"/> that will not resolve until the client stops listening for incoming messages.</returns>
+#pragma warning disable UseAsyncSuffix // Use Async suffix (we can't change this without breaking binary compat)
         public async Task ConnectAsyncEx(IDictionary<string, string> requestHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+#pragma warning restore UseAsyncSuffix // Use Async suffix
         {
             if (IsConnected)
             {

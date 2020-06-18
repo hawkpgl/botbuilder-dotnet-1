@@ -31,7 +31,9 @@ namespace Microsoft.Bot.Streaming.Transport.WebSockets
                         "Closed by the WebSocketTransport",
                         CancellationToken.None));
                 }
+#pragma warning disable CA1031 // Do not catch general exception types (ignore exceptions while the socket is being closed)
                 catch (Exception)
+#pragma warning restore CA1031 // Do not catch general exception types
                 {
                     // Any exception thrown here will be caused by the socket already being closed,
                     // which is the state we want to put it in by calling this method, which
@@ -55,7 +57,7 @@ namespace Microsoft.Bot.Streaming.Transport.WebSockets
                     var result = await _socket.ReceiveAsync(memory, CancellationToken.None).ConfigureAwait(false);
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
-                        await _socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Socket closed", CancellationToken.None);
+                        await _socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Socket closed", CancellationToken.None).ConfigureAwait(false);
                         if (_socket.State == WebSocketState.Closed)
                         {
                             _socket.Dispose();

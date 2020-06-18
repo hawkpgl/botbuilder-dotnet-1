@@ -8,14 +8,17 @@ namespace Microsoft.Bot.Streaming.PayloadTransport
     internal class TransportDisconnectedException : Exception
     {
         public TransportDisconnectedException()
-            : base()
         {
         }
 
         public TransportDisconnectedException(string reason)
-            : base()
         {
             Reason = reason;
+        }
+
+        public TransportDisconnectedException(string message, Exception innerException) 
+            : base(message, innerException)
+        {
         }
 
         public string Reason { get; set; }

@@ -20,7 +20,7 @@ namespace Microsoft.Bot.Streaming.PayloadTransport
         private readonly SendQueue<SendPacket> _sendQueue;
         private readonly EventWaitHandle _connectedEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
         private ITransportSender _sender;
-        private bool _isDisconnecting = false;
+        private bool _isDisconnecting;
         private readonly byte[] _sendHeaderBuffer = new byte[TransportConstants.MaxHeaderLength];
         private readonly byte[] _sendContentBuffer = new byte[TransportConstants.MaxPayloadLength];
 
