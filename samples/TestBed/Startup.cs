@@ -59,10 +59,10 @@ namespace Microsoft.BotBuilderSamples
             services.AddSingleton<ConversationState>();
 
             // The Dialog that will be run by the bot.
-            services.AddSingleton<TestDialog>();
+            services.AddSingleton<RootDialog1>();
 
             // Create the bot. the ASP Controller is expecting an IBot.
-            services.AddSingleton<IBot, DialogBot<TestDialog>>();
+            services.AddSingleton<IBot, DialogBot<RootDialog1>>();
 
             // Add this so memory scopes are populated correctly
             services.AddSingleton<IConfiguration>(this.Configuration);

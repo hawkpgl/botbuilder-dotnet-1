@@ -51,11 +51,10 @@ namespace Microsoft.BotBuilderSamples
                         }
                     },
 
-                    // joke is always available if it is a turn.0 trigger. Joke is not available otherwise.
+                    // joke is always available if it is an interruption.
                     new OnIntent()
                     {
                         Intent = "joke",
-                        Condition = "count(dialogContext.state) == 2",
                         Actions = new List<Dialog>()
                         {
                             new BeginDialog()
@@ -65,11 +64,12 @@ namespace Microsoft.BotBuilderSamples
                         }
                     },
 
-                    // queue up joke if we are in a sensitive multi-turn flow
+                    // queue up joke if we are in the middle of prompting for name or age. You can also do this via 
+                    // contains(dialogContext.state, 'askForName') || contains(dialogContext.state, 'askForAge')
                     new OnIntent()
                     {
                         Intent = "joke",
-                        Condition = "contains(dialogContext.stack, 'askForName') || contains(dialogContext.stack, 'askForAge')",
+                        Condition = "isDialogActive('askForName', 'askForAge')",
                         Actions = new List<Dialog>()
                         {
                             new EditActions()
@@ -99,10 +99,10 @@ namespace Microsoft.BotBuilderSamples
                     new OnIntent()
                     {
                         Intent = "start",
-                        Condition = "count(dialogContext.stack) == 2",
+                        Condition = "!hasPendingActions()",
                         Actions = new List<Dialog>()
                         {
-                            new SendActivity("In start .. this is not possible as an interruption...")
+                            new SendActivity("In start .. this action is not possible as an interruption...")
                         }
                     },
 
@@ -110,7 +110,7 @@ namespace Microsoft.BotBuilderSamples
                     new OnIntent()
                     {
                         Intent = "profile",
-                        Condition = "!contains(dialogContext.stack, 'userProfileDialog')",
+                        Condition = "!isDialogActive('userProfileDialog')",
                         Actions = new List<Dialog>()
                         {
                             new SendActivity("In profile .. this is always possible and I handle it immediately."),
@@ -184,7 +184,7 @@ namespace Microsoft.BotBuilderSamples
                     new OnIntent()
                     {
                         Intent = "why",
-                        Condition = "contains(dialogContext.stack, 'askForName')",
+                        Condition = "isDialogActive('askForName')",
                         Actions = new List<Dialog>()
                         {
                             new SendActivity("I need your name to address you correctly"),
@@ -193,7 +193,7 @@ namespace Microsoft.BotBuilderSamples
                     new OnIntent()
                     {
                         Intent = "why",
-                        Condition = "contains(dialogContext.stack, 'askForAge')",
+                        Condition = "isDialogActive('askForAge')",
                         Actions = new List<Dialog>()
                         {
                             new SendActivity("I need your age to provide relevant product recommendations")
@@ -233,7 +233,7 @@ namespace Microsoft.BotBuilderSamples
                     new OnIntent()
                     {
                        Intent = "no",
-                       Condition = "contains(dialogContext.stack, 'askForName')",
+                       Condition = "isDialogActive('askForName')",
                        Actions = new List<Dialog>()
                        {
                            new SetProperty()
@@ -246,7 +246,7 @@ namespace Microsoft.BotBuilderSamples
                     new OnIntent()
                     {
                        Intent = "no",
-                       Condition = "contains(dialogContext.stack, 'askForAge')",
+                       Condition = "isDialogActive('askForAge')",
                        Actions = new List<Dialog>()
                        {
                            new SetProperty()
