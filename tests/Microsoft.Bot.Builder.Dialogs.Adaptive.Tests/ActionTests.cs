@@ -136,6 +136,18 @@ namespace Microsoft.Bot.Builder.Dialogs.Adaptive.Tests
         }
 
         [TestMethod]
+        public async Task Action_EditActionInsertActions()
+        {
+            await TestUtils.RunTestScript(ResourceExplorer);
+        }
+
+        [TestMethod]
+        public async Task Action_EditActionAppendActions()
+        {
+            await TestUtils.RunTestScript(ResourceExplorer);
+        }
+
+        [TestMethod]
         public async Task Action_EditActionReplaceSequence()
         {
             await TestUtils.RunTestScript(ResourceExplorer);
@@ -250,6 +262,7 @@ namespace Microsoft.Bot.Builder.Dialogs.Adaptive.Tests
         }
 
         [TestMethod]
+        [Ignore]
         public async Task Action_ReplaceDialogRecursive()
         {
             await TestUtils.RunTestScript(ResourceExplorer);
