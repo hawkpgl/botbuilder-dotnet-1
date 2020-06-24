@@ -1,34 +1,23 @@
 {
-    "$schema": "../../app.schema",
     "$kind": "Microsoft.AdaptiveDialog",
-    "autoEndDialog": false,
-    "generator": "root.lg",
-    "recognizer": {
-        "$kind": "Microsoft.RegexRecognizer",
-        "intents": [
-            {
-                "intent": "Test",
-                "pattern": "test"
-            }
-        ]
-    },
     "triggers": [
         {
             "$kind": "Microsoft.OnConversationUpdateActivity",
             "actions": [
                 {
-                    "$kind": "Microsoft.SendActivity",
-                    "activity": "${WelcomeUser()} I have ${settings}"
+                    "$kind": "Microsoft.SetProperty",
+                    "property": "uesr.name",
+                    "value": "Human"
                 }
+                
             ]
         },
         {
-            "$kind": "Microsoft.OnIntent",
-            "intent": "Test",
+            "$kind": "Microsoft.OnError",
             "actions": [
                 {
                     "$kind": "Microsoft.SendActivity",
-                    "activity": "${LgBug()}"
+                    "activity": "Here's the exception information - ${turn.dialogevent.value.dialogcontext}"
                 }
             ]
         }

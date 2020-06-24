@@ -9,6 +9,11 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DelaySign>false</DelaySign>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Microsoft.Bot.Builder.TestBot.NetCore21' ">
+    <StartAction>Project</StartAction>
+    <ExternalConsole>true</ExternalConsole>
+    <ApplicationURL>https://localhost:5001;http://localhost:5000</ApplicationURL>
+  </PropertyGroup>
   <ItemGroup>
     <Content Remove="Cards\welcomeCard.json" />
   </ItemGroup>

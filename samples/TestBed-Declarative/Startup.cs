@@ -22,7 +22,6 @@ namespace Microsoft.BotBuilderSamples
         public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             this.Configuration = configuration;
-            HostContext.Current.Set<IConfiguration>(configuration);
             this.HostingEnvironment = env;
         }
 
