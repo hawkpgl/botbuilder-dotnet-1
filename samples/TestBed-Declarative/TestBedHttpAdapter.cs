@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs.Adaptive;
 using Microsoft.Bot.Builder.Dialogs.Debugging;
@@ -14,6 +16,8 @@ namespace Microsoft.BotBuilderSamples
 {
     public class TestBedHttpAdapter : BotFrameworkHttpAdapter
     {
+        private Templates _lgTemplates;
+
         public TestBedHttpAdapter(ICredentialProvider credentialProvider, IConfiguration configuration, ILogger<BotFrameworkHttpAdapter> logger, IStorage storage, UserState userState, ConversationState conversationState, ResourceExplorer resourceExplorer)
             : base(credentialProvider, logger: logger)
         {
@@ -22,6 +26,8 @@ namespace Microsoft.BotBuilderSamples
             this.UseState(userState, conversationState);
             this.UseDebugger(configuration.GetValue<int>("debugport", 4712), events: new Events<AdaptiveEvents>());
 
+            _lgTemplates = Templates.ParseFile(Path.Join(".", "TestBedHttpAdapter.lg"));
+
             this.OnTurnError = async (turnContext, exception) =>
             {
                 // Log any leaked exception from the application.
@@ -29,7 +35,8 @@ namespace Microsoft.BotBuilderSamples
 
                 // Send a catch-all apology to the user.
                 await turnContext.SendActivityAsync("Sorry, it looks like something went wrong.");
-                await turnContext.SendActivityAsync(exception.ToString()).ConfigureAwait(false);
+
+                await turnContext.SendActivityAsync(ActivityFactory.FromObject(_lgTemplates.Evaluate("exception", exception))).ConfigureAwait(false);
 
                 if (conversationState != null)
                 {
