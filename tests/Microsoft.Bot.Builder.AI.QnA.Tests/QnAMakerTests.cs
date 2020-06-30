@@ -303,8 +303,7 @@ namespace Microsoft.Bot.Builder.AI.Tests
         {
             // Get basic Qna
             var qna = QnaReturnsAnswer();
-
-            await Assert.ThrowsAsync<ArgumentException>(() => qna.GetAnswersAsync(null));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => qna.GetAnswersAsync(null));
         }
 
         [Fact]
@@ -822,9 +821,7 @@ namespace Microsoft.Bot.Builder.AI.Tests
                 Host = $"{_hostname}/v2.0"
             };
 
-            var v2Qna = GetQnAMaker(mockHttp, v2LegacyEndpoint);
-
-            await Assert.ThrowsAsync<NotSupportedException>(() => v2Qna.GetAnswersAsync(GetContext("How do I be the best?")));
+            await Assert.ThrowsAsync<NotSupportedException>(() => GetQnAMaker(mockHttp, v2LegacyEndpoint).GetAnswersAsync(GetContext("How do I be the best?")));
         }
 
         [Fact]
@@ -841,9 +838,7 @@ namespace Microsoft.Bot.Builder.AI.Tests
                 Host = $"{_hostname}/v3.0"
             };
 
-            var v3Qna = GetQnAMaker(mockHttp, v3LegacyEndpoint);
-
-            await Assert.ThrowsAsync<NotSupportedException>(() => v3Qna.GetAnswersAsync(GetContext("How do I be the best?")));
+            await Assert.ThrowsAsync<NotSupportedException>(() => GetQnAMaker(mockHttp, v3LegacyEndpoint).GetAnswersAsync(GetContext("How do I be the best?")));
         }
 
         [Fact]
@@ -1207,7 +1202,7 @@ namespace Microsoft.Bot.Builder.AI.Tests
             Assert.True(((Dictionary<string, string>)telemetryClient.Invocations[0].Arguments[1]).ContainsKey("answer"));
             Assert.Equal("No Qna Answer matched", ((Dictionary<string, string>)telemetryClient.Invocations[0].Arguments[1])["answer"]);
             Assert.True(((Dictionary<string, string>)telemetryClient.Invocations[0].Arguments[1]).ContainsKey("articleFound"));
-            Assert.Single((Dictionary<string, double>)telemetryClient.Invocations[0].Arguments[2]);
+            Assert.Empty((Dictionary<string, double>)telemetryClient.Invocations[0].Arguments[2]);
 
             // Assert - Validate we didn't break QnA functionality.
             Assert.NotNull(results);
